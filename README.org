@@ -1,0 +1,8 @@
+This repository contians notes and code for our image processing course.
+* structure
+Each member has a directory for themselves that has code smaples and stuff they worked on.
+project1 is for the midterm project.
+project2 is for the final project.
+* resources
+http://szeliski.org/Book/download.php
+[[https://www.youtube.com/watch?v=tY2gczObpfU&list=PLUl4u3cNGP63pfpS1gV5P9tDxxL_e4W8O&index=1&pp=iAQB][MIT OCW for machine vision]]

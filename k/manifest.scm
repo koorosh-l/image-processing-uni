@@ -7,4 +7,5 @@
 		      ,python-scikit-image
 		      ,python-scikit-learn
 		      ,python-scikit-learn-extra
-		      ,tensorflow))
+		      ,tensorflow
+		      ,guile-aiscm))

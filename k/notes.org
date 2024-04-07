@@ -1,0 +1,6 @@
+* Terminology and definitions
+An image is a function f(x,y) which returns the brightness value for the pixel located at coordinates x,y (usually stored in a matrix).
+Elemntwise oprations are oprations done are elements of a matix or more, if an elementwise operation is done on 2 or matrices then their sizes should match.
+- formal definition:
+** Pinhole camera model
+the pinhole model was created so that we don't have to deal with lenses in the early stage of developing an intuition for how image is formed.
