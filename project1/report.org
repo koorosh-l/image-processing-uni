@@ -1,0 +1,70 @@
+#+LATEX: \setlength\parindent{0pt}
+#+OPTIONS: \n:t
+* Preparation Of Data
+#+begin_src python
+  digits = datasets.load_digits()
+  totalItems = len(digits.images)
+  flattened_images = digits.images.reshape(totalItems, -1)
+  df_data = pd.DataFrame(flattened_images)
+  df_data = df_data.astype('float32')
+  X_train, X_test, y_train, y_test = train_test_split(df_data, digits.target,
+                                                      test_size=0.2, shuffle=False)
+#+end_src
+*digits = datasets.load_digits():* This line loads the handwritten digits dataset from scikit-learn's datasets module. It's important because it provides the data for training and testing the machine learning model.
+
+*totalItems = len(digits.images):* This line calculates the total number of images in the dataset. Knowing the total number of items is crucial for  various operations like reshaping and splitting the data.
+
+*flattened_images = digits.images.reshape(totalItems, -1):* Here, the images are reshaped from a 2D array into a 1D array. This flattening operation is essential because many machine learning algorithms require input data in a flattened format.
+
+ *df_data = pd.DataFrame(flattened_images):* This line converts the flattened images array into a Pandas DataFrame. Using a DataFrame can be advantageous for data manipulation, visualization, and compatibility with other data processing libraries.
+
+*f_data = df_data.astype('float32'):* It converts the data type of all elements in the DataFrame to float32. This conversion is important because neural networks often require input data to be in a specific numerical format for efficient computation.
+
+*X_train, X_test, y_train, y_test = train_test_split(df_data, digits.target, test_size=0.2, shuffle=False):* This line splits the dataset into training and testing sets. Splitting the data is crucial for evaluating the model's performance accurately. The test_size parameter specifies the proportion of the dataset to include in the test split, and shuffle determines whether to shuffle the data before splitting. In this case, shuffle=False preserves the order of the data, which might be important for sequential data like images.
+
+* Setting Up The Model
+#+begin_src python :options fontSize=2
+  model = tf.keras.Sequential([tf.keras.layers.Dense(128, activation='relu',
+                                                     input_shape=(64,)),
+                               tf.keras.layers.Dense(10, activation='softmax')])
+
+  model.compile(optimizer='adam',
+                loss='sparse_categorical_crossentropy',
+                metrics=['accuracy'])
+
+#+end_src
+*f.keras.Sequential:* adds layers one by one
+
+*tf.keras.layers.Dense:* this is a fully connected layer, each neurons connected to every neuron in the previous layer
+
+*Dense:* a type of layer that represents a fully connected layer in a neural network in TensorFlow's Keras API
+
+*compile:* configures the model for training
+
+*optimizer='adam':* optimization algorithm that's widely used for training deep learning models
+
+*loss='sparse_categorical_crossentropy':* the loss function used for training the model
+
+*metrics=['accuracy']:* a measure of how well the model predicts the correct labels during training
+
+The first layer has 128 neurons with the ReLU (Rectified Linear Unit) activation function and the input to this layer is a vector of 64 features.
+
+The second layer has 10 neurons with the softmax activation function. The outputs of this layer are then processed by the softmax activation function,which transforms them into a probability distribution.
+#+begin_src python
+  model.compile(optimizer='adam',
+                loss='sparse_categorical_crossentropy',
+                metrics=['accuracy'])
+#+end_src
+We create a neural network model with two dense layers, compiles it with the 'adam' optimizer and sparse categorical cross-entropy loss function, and specifies accuracy as the evaluation metric during training.
+
+* Training And Testing
+#+begin_src python
+  model.fit(X_train, y_train, epochs=100)
+  test_loss, test_acc = model.evaluate(X_test, y_test, verbose=2)
+#+end_src
+The function *fit* in it simplest form receives 2 Arguments an input data and a target data, The *epoch* optional arguments tells the model how many times it should iterate over the training and target data(this is not the same as training the model *epoch* number of times), return value of this function is a History object which by default is printed to *stdout*.
+
+The function *evaluate* receives two arguments same as *fit* and evaluates the model and received datasets, if the return value that is expected from the function is one then the output is going to be the data denoted in mode.metrics_names, which here are loss and accuracy of the model.
+
+* Confusion Matrix
+For Walid:  [[https://en.wikipedia.org/wiki/Confusion_matrix][confusion matrix]]
