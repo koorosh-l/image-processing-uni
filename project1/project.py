@@ -10,20 +10,14 @@ digits = datasets.load_digits()
 images = digits.images
 features = []
 for img in images:
-    # Convert image to grayscale
-    gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    # Thresholding
-    ret, thresh = cv2.threshold(gray, 0, 255, cv2.THRESH_BINARY_INV + cv2.THRESH_OTSU)
-    # Find contours
-    contours, hierarchy = cv2.findContours(thresh, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
-    # Moments calculation
+    #gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+    thresh = cv2.threshold(img, 4, 255, cv2.THRESH_BINARY)[1]
+    contours, hierarchy = cv2.findContours(np.uint8(thresh), 0, 0)
     for cnt in contours:
         M = cv2.moments(cnt)
         area = M['m00']
         if area > 0:
-            # Feature extraction
             features.append([area, M['m10']/area, M['m01']/area, M['m20']/area, M['m02']/area, M['m11']/(area**2)])
-
 # Convert features to numpy array
 data = np.array(features)
 
@@ -31,6 +25,7 @@ data = np.array(features)
 
 df_data = pd.DataFrame(data)
 df_data = df_data.astype('float32')
+print("aaaaaaaaaaaaaaaaaaaa")
 
 X_train, X_test, y_train, y_test = train_test_split(df_data, digits.target, test_size=0.2, shuffle=False)
 
