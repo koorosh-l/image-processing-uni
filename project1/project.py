@@ -11,20 +11,19 @@ digits = datasets.load_digits()
 images = digits.images
 features = []
 for img in images:    
-
-    blur = cv2.GaussianBlur(img, (3,3), 0)
-    normalize = blur / 255
+    
+    normalize = img / 255
     moments = cv2.moments(normalize)
     hu_moments = cv2.HuMoments(moments).flatten()
-    features.append(hu_moments)
-
+    features.append(hu_moments)    
+ 
 data = np.array(features)
+
+print(data)
+
 df_data = pd.DataFrame(data)
 df_data = df_data.astype('float32')
-#print("--------------------")
-#print(len(features))
-#print(len(digits.target))
-#print("--------------------")
+
 X_train, X_test, y_train, y_test = train_test_split(df_data, digits.target, test_size=0.2, shuffle=False)
 
 model = tf.keras.Sequential([tf.keras.layers.Flatten(input_shape=(df_data.shape[1],)),
