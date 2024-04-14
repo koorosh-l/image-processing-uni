@@ -6,18 +6,18 @@ import collections
 import tensorflow as tf
 from sklearn import datasets, metrics
 from sklearn.model_selection import train_test_split
+from skimage import io, color
+plt.matplotlib.use('TkAgg')
 digits = datasets.load_digits()
 images = digits.images
 features = []
 for img in images:
-    #gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    thresh = cv2.threshold(img, 4, 255, cv2.THRESH_TRUNC)[1]
-    contours, hierarchy = cv2.findContours(np.uint8(thresh), 0, 0)
-    for cnt in contours:
-        M = cv2.moments(cnt)
-        area = M['m00']
-        area += 1
-        features.append([area, M['m10']/area, M['m01']/area, M['m20']/area, M['m02']/area, M['m11']/(area**2)])
+    thresh = cv2.threshold(img, 7, 255, cv2.THRESH_BINARY)[1]
+    contours, _ = cv2.findContours(np.uint8(thresh), 0, 3)
+    blank_img = np.zeros_like(img)
+    # for cnt in contours:
+    #     M = cv2.HuMoments(cv2.moments(cnt)).flatten()
+    features.append(cv2.drawContours(blank_img, contours, -1, (255, 255, 255), thickness=cv2.FILLED).flatten())
 
 data = np.array(features)
 
@@ -29,11 +29,9 @@ print(len(digits.target))
 print("--------------------")
 X_train, X_test, y_train, y_test = train_test_split(df_data, digits.target, test_size=0.2, shuffle=False)
 
-model = tf.keras.Sequential([
-    tf.keras.layers.Flatten(input_shape=(df_data.shape[1],)),  # Adjusted input shape
-    tf.keras.layers.Dense(128, activation='relu'),
-    tf.keras.layers.Dense(10, activation='softmax')  # Softmax activation for multiclass classification
-])
+model = tf.keras.Sequential([tf.keras.layers.Flatten(input_shape=(df_data.shape[1],)),
+                             tf.keras.layers.Dense(128, activation='relu'),
+                             tf.keras.layers.Dense(10, activation='softmax')])
 
 model.compile(optimizer='adam',
               loss=tf.keras.losses.sparse_categorical_crossentropy,
