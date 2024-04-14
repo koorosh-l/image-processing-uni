@@ -10,8 +10,10 @@ from sklearn.model_selection import train_test_split
 digits = datasets.load_digits()
 images = digits.images
 totalItems = len(images)
+
 for i in range(totalItems):
     images[i] = cv2.threshold(images[i],10, 255, cv2.THRESH_BINARY)[1]
+
 flattened_images = digits.images.reshape(totalItems, -1)
 
 df_data = pd.DataFrame(flattened_images)
@@ -28,4 +30,5 @@ model.compile(optimizer='adam',
 
 model.fit(X_train, y_train, epochs=100)
 test_loss, test_acc = model.evaluate(X_test, y_test, verbose=2)
-print(test_acc, test_loss)
+print("Test Accuracy: ", test_acc)
+print("Test Loss: ", test_loss)
