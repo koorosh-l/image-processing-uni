@@ -19,8 +19,6 @@ for img in images:
  
 data = np.array(features)
 
-print(data)
-
 df_data = pd.DataFrame(data)
 df_data = df_data.astype('float32')
 
