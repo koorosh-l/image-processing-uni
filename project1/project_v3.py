@@ -9,21 +9,21 @@ from sklearn.model_selection import train_test_split
 
 digits = datasets.load_digits()
 images = digits.images
-features = []
+flattened_hu_moments = []
 for img in images:    
-    
-    #127, accurracy: 0.68 
+
     normalize = img / 127
     moments = cv2.moments(normalize)
     hu_moments = cv2.HuMoments(moments).flatten()
-    features.append(hu_moments)    
+    flattened_hu_moments.append(hu_moments)    
  
-data = np.array(features)
-
+data = np.array(flattened_hu_moments)
 df_data = pd.DataFrame(data)
 df_data = df_data.astype('float32')
 
 X_train, X_test, y_train, y_test = train_test_split(df_data, digits.target, test_size=0.2, shuffle=False)
+
+
 
 model = tf.keras.Sequential([tf.keras.layers.Flatten(input_shape=(df_data.shape[1],)),
                              tf.keras.layers.Dense(128, activation='relu'),
