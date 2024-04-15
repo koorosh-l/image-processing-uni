@@ -60,7 +60,7 @@ X_train, X_test, y_train, y_test = train_test_split(df_data, digits.target, test
 
 * Setting Up The Model
 
-The following configures the model and data passed to it.
+The following configures the model and data passed to it. We create a neural network model with two dense layers, compiles it with the 'adam' optimizer and sparse categorical cross-entropy loss function, and specifies accuracy as the evaluation metric during training.
 
 #+begin_src python :options fontSize=2
 
@@ -105,7 +105,7 @@ The second layer has 10 neurons with the softmax activation function. The output
                 loss='sparse_categorical_crossentropy',
                 metrics=['accuracy'])
 #+end_src
-We create a neural network model with two dense layers, compiles it with the 'adam' optimizer and sparse categorical cross-entropy loss function, and specifies accuracy as the evaluation metric during training.
+
 
 * Training And Testing
 #+begin_src python
