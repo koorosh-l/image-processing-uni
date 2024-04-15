@@ -57,11 +57,16 @@ df_data = df_data.astype('float32')
 X_train, X_test, y_train, y_test = train_test_split(df_data, digits.target, test_size=0.2, shuffle=False)
 #+end_src
 
+
 * Setting Up The Model
+
+The following configures the model and data passed to it.
+
 #+begin_src python :options fontSize=2
-  model = tf.keras.Sequential([tf.keras.layers.Dense(128, activation='relu',
-                                                     input_shape=(64,)),
-                               tf.keras.layers.Dense(10, activation='softmax')])
+
+  model = tf.keras.Sequential([tf.keras.layers.Flatten(input_shape=(df_data.shape[1],)),
+                             tf.keras.layers.Dense(128, activation='relu'),
+                             tf.keras.layers.Dense(10, activation='softmax')])
 
   model.compile(optimizer='adam',
                 loss='sparse_categorical_crossentropy',
@@ -69,14 +74,15 @@ X_train, X_test, y_train, y_test = train_test_split(df_data, digits.target, test
 
 #+end_src
 
-*f.keras.Sequential:*
-- Adds layers one by one
+- *tf.keras.Sequential()* adds layers one by one with the following paramaters:
+     - tf.keras.layers.Dense(): *Dense* is a type of layer that represents a fully connected layer in a neural network, each neuron is connected to every neuron in the previous layer.
 
-*tf.keras.layers.Dense:*
-- This is a fully connected layer, each neuron is connected to every neuron in the previous layer.
+#+begin_src python
 
-*Dense:*
-- A type of layer that represents a fully connected layer in a neural network in TensorFlow's Keras API.
+ model = tf.keras.Sequential([tf.keras.layers.Flatten(input_shape=(df_data.shape[1],)),
+                             tf.keras.layers.Dense(128, activation='relu'),
+                             tf.keras.layers.Dense(10, activation='softmax')])
+#+end_src
 
 *compile:*
 - Configures the model for training.
@@ -89,7 +95,6 @@ X_train, X_test, y_train, y_test = train_test_split(df_data, digits.target, test
 
 *metrics=['accuracy']:* 
 - A measure of how well the model predicts the correct labels during training.
-
 
 The first layer has 128 neurons with the ReLU (Rectified Linear Unit) activation function and the input to this layer is a vector of 64 features.
 
@@ -108,6 +113,6 @@ We create a neural network model with two dense layers, compiles it with the 'ad
   test_loss, test_acc = model.evaluate(X_test, y_test, verbose=2)
 #+end_src
 
-The function *fit* in it simplest form receives 2 Arguments an input data and a target data, The *epoch* optional arguments tells the model how many times it should iterate over the training and target data(this is not the same as training the model *epoch* number of times), return value of this function is a History object which by default is printed to *stdout*.
+The function *fit()* in it simplest form receives 2 Arguments an input data and a target data, The *epoch* optional arguments tells the model how many times it should iterate over the training and target data(this is not the same as training the model *epoch* number of times), return value of this function is a History object which by default is printed to *stdout*.
 
-The function *evaluate* receives two arguments same as *fit* and evaluates the model and received datasets, if the return value that is expected from the function is one then the output is going to be the data denoted in mode.metrics_names, which here are loss and accuracy of the model.
+The function *evaluate()* receives two arguments same as *fit* and evaluates the model and received datasets, if the return value that is expected from the function is one then the output is going to be the data denoted in mode.metrics_names, which here are loss and accuracy of the model.
