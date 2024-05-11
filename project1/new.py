@@ -13,6 +13,7 @@ prefix = os.getenv("IMG")
 #https://www.kaggle.com/datasets/afsananadia/fruits-images-dataset-object-detection
 
 def list_files_in_directory(directory):
+    directory = directory
     files = os.listdir(directory)
     files = [f for f in files if os.path.isfile(os.path.join(directory, f))]
     return files
@@ -40,14 +41,25 @@ def pad(arr):
     return arr
 
 def create_model():
-    model = models.Sequential([layers.Input=(16,),
+    model = models.Sequential([layers.Input(input_shape=(16,)),
                                layers.Dense(100, activation='relu'),
                                layers.Dense(10,  activation='relu')])
     # decide the last layer
 
 #data prepreation
-train_names = list_files_in_directory(prefix + "./fruits/train")
-test_names  = list_files_in_directory(prefix + "./fruits/test")
+test_path = "fruits/test/"
+train_path = "fruits/train/"
+train_names = list(map(lambda str: prefix + train_path + str,
+                  list_files_in_directory(prefix + train_path)))
+test_names  = list(map(lambda str: prefix + test_path + str,
+                  list_files_in_directory(prefix + test_path)))
+train_images = list(map(cv2.imread,
+                        train_names))
+test_images  = list(map(cv2.imread,
+                   test_names))
+train_labels =
+test_labels  =
+
 
 data = np.array(map((lambda d:
                      np.array(pad(find_bounding_rectangles(d)))),
