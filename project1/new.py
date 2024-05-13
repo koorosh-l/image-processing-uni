@@ -12,7 +12,7 @@ os.environ["IMG"] = '/home/quasikote/proj/img/project1/'
 #os.environ["IMG"] = '<path-repo>/img/project1/'
 prefix = os.getenv("IMG")
 #fruits data set can be found here
-#https://www.kaggle.com/datasets/afsananadia/fruits-images-dataset-object-detectino
+#https://www.kaggle.com/datasets/afsananadia/fruits-images-dataset-object-detection
 def list_map(proc, items):
     return list(map(proc, items))
 
