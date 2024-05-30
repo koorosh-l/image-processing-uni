@@ -10,13 +10,13 @@ This section of code loads the data, and processes it before being given to the 
 digits = datasets.load_digits()
 images = digits.images
 flattened_hu_moments = []
-for img in images:    
+for img in images:
 
     normalize = img / 127
     moments = cv2.moments(normalize)
     hu_moments = cv2.HuMoments(moments).flatten()
-    flattened_hu_moments.append(hu_moments)    
- 
+    flattened_hu_moments.append(hu_moments)
+
 data = np.array(flattened_hu_moments)
 df_data = pd.DataFrame(data)
 df_data = df_data.astype('float32')
@@ -28,7 +28,7 @@ X_train, X_test, y_train, y_test = train_test_split(df_data, digits.target, test
 - These lines load the handwritten digits dataset from scikit-learn's datasets module and . It's important because it provides the data for training and testing the machine learning model.
 
 #+begin_src python
-digits = datasets.load_digits(): 
+digits = datasets.load_digits():
 images = digits.images
 flattened_hu_moments = []
 #+end_src
@@ -36,11 +36,11 @@ flattened_hu_moments = []
 - The following code loops through the images array and normalizes each image before calculating the moments then hu_moments of each individual image. Finally the data is flattened and appeneded to an array for later use. Hu moments were chosen since they are invariant, which works great in classification problems such as this.
 
 #+begin_src python
-for img in images:    
+for img in images:
     normalize = img / 127
     moments = cv2.moments(normalize)
     hu_moments = cv2.HuMoments(moments).flatten()
-    flattened_hu_moments.append(hu_moments)    
+    flattened_hu_moments.append(hu_moments)
 #+end_src
 
   - These lines convert the flattened Hu moments array a numpy array then it is converted into a Pandas DataFrame. Using a DataFrame can be advantageous for data manipulation, visualization, and compatibility with other data processing libraries. It converts the data type of all elements in the DataFrame to float32. This conversion is important because neural networks often require input data to be in a specific numerical format for efficient computation.
@@ -87,13 +87,13 @@ The following configures the model and data passed to it. We create a neural net
 *compile:*
 - Configures the model for training.
 
-*optimizer='adam':* 
+*optimizer='adam':*
 - Optimization algorithm that's widely used for training deep learning models.
 
-*loss='sparse_categorical_crossentropy':* 
+*loss='sparse_categorical_crossentropy':*
 - The loss function used for training the model.
 
-*metrics=['accuracy']:* 
+*metrics=['accuracy']:*
 - A measure of how well the model predicts the correct labels during training.
 
 The first layer has 128 neurons with the ReLU (Rectified Linear Unit) activation function and the input to this layer is a vector of 64 features.
