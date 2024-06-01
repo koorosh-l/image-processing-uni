@@ -12,9 +12,10 @@ import gc
 
 # variables for configuration
 rec_padding = 4
-
+data_set = "fruits"
 plt.matplotlib.use('TkAgg')
 os.environ["IMG"] = '/home/quasikote/proj/img/project1/'
+
 # os.environ["IMG"] = '<path-repo>/img/project1/'
 
 
@@ -51,6 +52,12 @@ def raw_fruit_data():
     return train_images, train_names, test_images, test_names
 def optical_chars():
     return []
+def get_data():
+    if data_set == "fruits":
+        return raw_fruit_data()
+    else:
+        optical_chars()
+
 #general oprations
 
 def create_model(i_size, cl_no):
@@ -66,7 +73,6 @@ def prep_lables(lbls, clz):
                     clz.index(a)
                     ,lbls))
 
-#def run_model(input_size, train_images, train_labels, test_images, test_labels):
 def run_model(get_data):
     train_data, train_labels, test_data, test_labels = get_data()
     clz = len(prep_classes(test_labels))
@@ -74,14 +80,14 @@ def run_model(get_data):
     model.compile(optimizer='adam',
                   loss=tf.keras.losses.sparse_categorical_crossentropy,
                   metrics=['accuracy'])
-    model.fit(train_data,train_labels, epochs=300)
+    model.fit(train_data,train_labels, epochs=100)
     tl, tc = model.evaluate(test_data, test_labels, verbose=2)
     return tc
 
 # midterm
 
 def prep_datav1():
-    train_images, train_labels, test_images, test_labels = raw_fruit_data()
+    train_images, train_labels, test_images, test_labels = get_data()
     clz = prep_classes(test_labels)
     mmnts = (lambda i:
              np.array(list(cv2.moments(cv2.cvtColor(i, cv2.COLOR_RGB2GRAY)).values())))
@@ -114,7 +120,7 @@ def find_bounding_rectangles(image):
 
 #main
 def prep_datav2():
-    train_images, train_labels, test_images, test_labels = raw_fruit_data()
+    train_images, train_labels, test_images, test_labels = get_data()
     clz = prep_classes(test_labels)
     train_images = np.array(list_map(lambda d:
                                      np.array(list_map(lambda i: list(i),pad(find_bounding_rectangles(d)))).flatten()

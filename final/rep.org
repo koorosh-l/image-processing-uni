@@ -1,0 +1,72 @@
+* Dataset
+We used a data set of [[https://www.kaggle.com/datasets/afsananadia/fruits-images-dataset-object-detection][fruits]] and implemented finding bounding rectangles and features mentioned in midterm and makeup project.
+this dataset has some misspellings in the name of the files the following script can be used to fix these issues.
+#+begin_src shell
+  #/bin/sh
+
+  unzip "$1"
+
+  mv Test\ File/Test\ File/ test
+  mv Train\ File/Train\ File/ train
+  rm train/*.txt test/*.txt
+  rm Test\ File/ Train\ File/ -r
+  mkdir fruits
+  mv  test train fruits/
+
+  for i in ./fruits/train/*Apple*; do
+      echo $i
+      new_name=$(echo $i | sed "s/\ //")
+      mv "$i" "$new_name"
+  done
+
+  for i in ./fruits/train/*Lichi*; do
+      new_name=$(echo $i | sed "s/Lichi/Litchi/")
+      mv "$i" "$new_name"
+  done
+
+
+  for i in ./fruits/train/*Pulm*; do
+      new_name=$(echo $i | sed "s/\ Pulm/Plum/")
+      mv "$i" "$new_name"
+  done
+
+#+end_src
+* Source Code Explanation
+** Variables
+- *rec_padding*: the minimum number of rectangles that should be used in makeup method.
+- *IMG*: environment variable points to the root of the dataset.
+- *data_set*: determines which dataset to use.
+
+** Utility Functions
+- *list_files_in_directory(str)*: returns the name of all files (not directories) contained in the path specified by *str*.
+- *list_map(func, items)*: applies function *func* on elements in *items* and creates a new list from the return values in the same order.
+
+** Data Accusation functions
+all functions listed here return 4 lists:
+- l1: images for training.
+- l2: labels for training.
+- l3: images for testing.
+- l4: labels for testing.
+*get_data* is the function used in the rest of the program, it decides which dataset to use based on the global variable *data_set*.
+
+** General Operations
+- *create_model(i_size, cl_no)*: creates a model with *i_size* input layers and *cl_no* classifications.
+- *prep_classes(lbls)*: returns a unique list from the list lbls that can be used to determine the total number of classifications.
+- *prep_labels(lbls,clz)*: returns a list of the length *len(lbls)*, elements inside of the returned list contain indexes of classes in *clz*.
+- *run_model(get_data)*: acquires and prepares the data using the function *get_data* creates a model with the appropriate size, trains the model and runs the test cases.
+
+** Midterm Functions
+- *prep_datav1*: computes the features of the images returned by *get_data()*, all the features are passed to the classifier.
+** Makeup Functions
+- *prep_datav2*: computes the bounding rectangles of the images returned by *get_data()*, and pads the values according to *rec_padding* global variable.
+
+* Screenshots
+[[./1.jpg]]
+[[./2.jpg]]
+[[./3.jpg]]
+[[./4.jpg]]
+[[./5.jpg]]
+* Conclusion
+Both methods yield a similar result of about 10% which is really this can be attributed to small sample size, but there are also issues specific to each method as well e.g., finding bounding rectangles (the makeup project) can't tell us much about the type of fruit we have since most fruits are round and can be the same size depending on the perspective there is also the special case of grapes and bananas that can be detected only using the bounding rectangles due to their shape and in the case of grapes the how many of the exist in the picture.
+
+Both of these method operate without considering the colors of the image which probably is the best way classify the fruits of this dataset, if we consider the colors we can also use finding the bounding rectangle to get a better average of all the colors in the regions of the picture that are important to us.
