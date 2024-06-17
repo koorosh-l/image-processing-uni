@@ -1,2 +1,5 @@
 /project1/fruits/
 /final/fruits/
+*.jpg
+*.pdf
+*.tex
