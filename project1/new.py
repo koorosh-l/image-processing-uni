@@ -14,6 +14,9 @@ prefix = os.getenv("IMG")
 #fruits data set can be found here
 #https://www.kaggle.com/datasets/afsananadia/fruits-images-dataset-object-detection
 def list_map(proc, items):
+    # for i in range(len(items)):
+    #     items[i] = proc(items[i])
+    # return items
     return list(map(proc, items))
 
 def list_files_in_directory(directory):
@@ -32,51 +35,52 @@ def find_bounding_rectangles(image):
     bounding_rectangles = []
     for contour in contours:
         x, y, w, h = cv2.boundingRect(contour)
-        bounding_rectangles.append((x, y, w, h))
+        bounding_rectangles.append([x, y, w, h])
     return bounding_rectangles
 
 
-def pad(arr):
-    p = (0,0,0,0)
+def pad(arr, size):
+    p = [0,0,0,0]
     l = len(arr)
-    if l >= 4:
-        return arr[0:4]
-    while l != 4:
+    if l >= size:
+        return arr[0:size]
+    while l != size:
         arr.append(p)
         l = l + 1
     return arr
 
-def create_model():
-    model = models.Sequential([layers.Flatten(input_shape=(16,)),
+def create_model(input_size):
+    model = models.Sequential([layers.Flatten(input_shape=(input_size,)),
                                layers.Dense(100, activation='relu'),
                                layers.Dense(10,  activation='relu')])
     return model
-# decide the last layer
-
 #data prepreation
 test_path    = "fruits/test/"
 train_path   = "fruits/train/"
+#initial names and images
 train_names  = list_map(lambda str: prefix + train_path + str,
                         list_files_in_directory(prefix + train_path))
-test_names  = list_map(lambda str: prefix + test_path + str,
+test_names   = list_map(lambda str: prefix + test_path + str,
                        list_files_in_directory(prefix + test_path))
-train_images = list_map(cv2.imread,
-                        train_names)
-test_images  = list_map(cv2.imread,
-                        test_names)
+train_images = list_map(cv2.imread, train_names)
+test_images  = list_map(cv2.imread, test_names)
 train_names  = list_map(lambda str:
                         os.path.basename(str).split('_')[1].split('.')[0].lower()
                         ,train_names)
-test_names = list_map(lambda str:
+test_names   = list_map(lambda str:
                       os.path.basename(str).split('_')[1].split('.')[0].lower()
                       ,test_names)
+# processing the images
+data = list_map(find_bounding_rectangles, train_images)
+m = max(list_map(len, data))
+data = np.array(list_map(lambda rects: np.array(pad(rects, m)).flatten(), data))
 
-data = np.array(list_map(lambda d:
-                         np.array(list_map(lambda i: list(i),pad(find_bounding_rectangles(d)))).flatten()
-                         ,train_images))
+# data = np.array(list_map(lambda d:
+#                          np.array(list_map(lambda i: list(i),pad(find_bounding_rectangles(d)))).flatten()
+#                         ,train_images))
 fruits = list(set(train_names))
 
-model = create_model()
+model = create_model(len(data[0]))
 model.compile(optimizer='adam',
               loss=tf.keras.losses.sparse_categorical_crossentropy,
               metrics=['accuracy'])
@@ -90,9 +94,13 @@ test_lables = np.array(list_map(lambda a:
 
 model.fit(data, labels, epochs=100)
 
-test_data = np.array(list_map(lambda d:
-                         np.array(list_map(lambda i: list(i),pad(find_bounding_rectangles(d)))).flatten()
-                         ,test_images))
+test_data = list_map(find_bounding_rectangles, test_images)
+#m = max(list_map(len, test_data))
+test_data = np.array(list_map(lambda rects: np.array(pad(rects, m)).flatten(), test_data))
+
+# test_data = np.array(list_map(lambda d:
+#                          np.array(list_map(lambda i: list(i),pad(find_bounding_rectangles(d)))).flatten()
+#                          ,test_images))
 test_loss, test_acc = model.evaluate(test_data, test_lables, verbose=2)
 
 print('\nTest accuracy:', test_acc)
